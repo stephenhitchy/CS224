@@ -9,9 +9,6 @@ from urllib.parse import urlencode
 import requests
 
 
-# In[14]:
-
-
 class SpotifyAPI(object):
     access_token = None
     access_token_expires = datetime.datetime.now()
@@ -31,7 +28,7 @@ class SpotifyAPI(object):
         """
         client_id = self.client_id
         client_secret = self.client_secret
-        if client_secret == None or client_id == None:
+        if client_secret is None or client_id is None:
             raise Exception("You must set client_id and client_secret")
         client_creds = f"{client_id}:{client_secret}"
         client_creds_b64 = base64.b64encode(client_creds.encode())
@@ -59,7 +56,7 @@ class SpotifyAPI(object):
         data = r.json()
         now = datetime.datetime.now()
         access_token = data['access_token']
-        expires_in = data['expires_in'] # seconds
+        expires_in = data['expires_in']  # seconds
         expires = now + datetime.timedelta(seconds=expires_in)
         self.access_token = access_token
         self.access_token_expires = expires
@@ -73,7 +70,7 @@ class SpotifyAPI(object):
         if expires < now:
             self.perform_auth()
             return self.get_access_token()
-        elif token == None:
+        elif token is None:
             self.perform_auth()
             return self.get_access_token()
         return token
@@ -84,7 +81,6 @@ class SpotifyAPI(object):
             "Authorization": f"Bearer {access_token}"
         }
         return headers
-
 
     def get_resource(self, lookup_id, resource_type='albums', version='v1'):
         endpoint = f"https://api.spotify.com/{version}/{resource_type}/{lookup_id}"
@@ -101,4 +97,6 @@ class SpotifyAPI(object):
         return self.get_resource(_id, resource_type='artists')
 
 
-
+if __name__ == "main":
+    # call gui init here
+    print("hello")
