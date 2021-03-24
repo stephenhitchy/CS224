@@ -1,4 +1,3 @@
-
 import spotify  # Local import of spotify.py
 import tkinter  # GUI  Reference: https://www.tutorialspoint.com/python/python_gui_programming.htm
 from tkinter import font as tkFont  # tkinter fonts
@@ -155,12 +154,13 @@ def show_dual_list_dialog(type):
     center_in_screen(top)
     top.mainloop()
 
+
 def center_in_screen(window):
-        screen_width = window.winfo_screenwidth()
-        screen_height = window.winfo_screenheight()
-        x = (screen_width / 2) - 375  # can't figure out how to get current windows size
-        y = (screen_height / 2) - 300
-        window.geometry("+%d+%d" % (x, y))
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+    x = (screen_width / 2) - 375  # can't figure out how to get current windows size
+    y = (screen_height / 2) - 300
+    window.geometry("+%d+%d" % (x, y))
 
 
 if __name__ == "__main__":
