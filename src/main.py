@@ -2,26 +2,31 @@ import spotify  # Local import of spotify.py
 import tkinter  # GUI  Reference: https://www.tutorialspoint.com/python/python_gui_programming.htm
 from tkinter import font as tkFont  # tkinter fonts
 from tkinter import messagebox  # tkinter message box
+from tkinter import PhotoImage
+from tkinter import Canvas
 import ttkthemes  # tkinter themes
 from tkinter import filedialog as fd  # tkinter file dialog
 import os
 from cache import cache  # Used to cache API calls
+from spotipy.exceptions import SpotifyException
 
 
 # Main function
 # Builds and sets up GUI
 def main():
     # Beginning of GUI
-    print("Building GUI...")
     main_window = tkinter.Tk(screenName="song-alyze")
+    main_window["bg"] = "black"
+    img = PhotoImage(file="spotify_bg.png")
+    bg_label = tkinter.Label(main_window, bg="black", image=img)
+    bg_label.pack()
     main_window.title("song-alyze")
-    main_window.resizable(False, False)
     theme = ttkthemes.ThemedStyle(main_window)
     theme.theme_use("arc")  # Never got this to work. Not sure why
-    info_frame = tkinter.Frame(main_window)
+    info_frame = tkinter.Frame(main_window, bg="black")
     content_frame = tkinter.Frame(main_window)
-    info_frame.grid(row=0, column=0)
-    content_frame.grid(row=1, column=0)
+    info_frame.pack()
+    content_frame.pack()
     center_in_screen(main_window)
     font = tkFont.Font(family="Segoe UI", size=11)
     main_window.option_add("*Font", font)
@@ -29,22 +34,24 @@ def main():
     btn_pad = {"x": 10, "y": 10}
 
     # Welcome label
-    wel_lbl_txt = tkinter.StringVar()
-    wel_lbl_txt.set("Welcome {}".format(spotify.sp.current_user()["display_name"]))
-    wel_lbl = tkinter.Label(info_frame, textvariable=wel_lbl_txt)
-    tit_lbl_txt = tkinter.StringVar()
-    tit_lbl_txt.set("song-alyze")
-    title_lbl = tkinter.Label(info_frame, textvariable=tit_lbl_txt, font=("Segoe UI Bold", 14))
+    welcome_label_txt = tkinter.StringVar()
+    welcome_label_txt.set("Welcome {}".format(spotify.sp.current_user()["display_name"]))
+    wel_lbl = tkinter.Label(info_frame, textvariable=welcome_label_txt, bg="black", fg="lime")
+    title_label_txt = tkinter.StringVar()
+    title_label_txt.set("song-alyze")
+    title_lbl = tkinter.Label(info_frame, textvariable=title_label_txt, font=("Segoe UI Bold", 14),
+                              bg="black", fg="lime")
     # Top Tracks & Artists button
-    top_btn = tkinter.Button(content_frame, text="Top Tracks & Artists", width=btn_dim["w"], height=btn_dim["h"],
-                                    command=lambda: show_dual_list_dialog("Top"))
+    top_btn = tkinter.Button(content_frame, text="Top Tracks & Artists", width=btn_dim["w"],
+                             height=btn_dim["h"], command=lambda: show_dual_list_dialog("Top"))
     # Rec Tracks & Artists button
-    rec_btn = tkinter.Button(content_frame, text="Recommended Tracks & Artists", width=btn_dim["w"], height=btn_dim["h"],
-                                 command=lambda: show_dual_list_dialog("Rec"))
+    rec_btn = tkinter.Button(content_frame, text="Recommended Tracks & Artists", width=btn_dim["w"],
+                             height=btn_dim["h"], command=lambda: show_dual_list_dialog("Rec"))
     title_lbl.grid(row=0, column=0)
     wel_lbl.grid(row=1, column=0)
     top_btn.grid(row=0, column=0, padx=btn_pad["x"], pady=btn_pad["y"])
     rec_btn.grid(row=0, column=1, padx=btn_pad["x"], pady=btn_pad["y"])
+    main_window.pack_slaves()
     main_window.mainloop()
 
 
@@ -57,16 +64,19 @@ def show_dual_list_dialog(type):
 
     # Function to handle the create playlist button
     def create_playlist_btn_click(list):
-        spotify.create_playlist([list[i]["id"] for i in range(int(default_num_option.get()))], name="Your {} Tracks".format(type))
+        spotify.create_playlist([list[i]["id"] for i in range(int(default_num_option.get()))],
+                                name="Your {} Tracks".format(type))
         messagebox.showinfo("Success", "Playlist Created!")
 
     def play_playlist_btn_click(list):
         ids = []
         for t in list:
-            id = t["id"]
-            ids.append(id)
-        spotify.play_songs(ids)
-
+            e = t["id"]
+            ids.append(e)
+        try:
+            spotify.play_songs(ids)
+        except SpotifyException:
+            messagebox.showinfo("Error", "You must have spotify premium to use playback functionality.")
 
     def on_dropdown_change(*args):
         tf = default_timeframe_option.get().lower().split(" ")
