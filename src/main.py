@@ -9,12 +9,35 @@ from tkinter import filedialog as fd  # tkinter file dialog
 import os
 from cache import cache  # Used to cache API calls
 from spotipy.exceptions import SpotifyException
-
+from tkinter import *
+from PIL import Image, ImageTk
 
 # Main function
 # Builds and sets up GUI
 def main():
-    # Beginning of GUI
+    root = Tk()
+    root.title("Title")
+    root.geometry('1600x1600')
+    root.minsize(1600, 1600)
+    frame = Frame(root, width=1600, height=1600, relief='raised', borderwidth=2)
+    frame.pack(fill=BOTH, expand=YES)
+    frame.pack_propagate(False)
+
+    photo = ImageTk.PhotoImage(Image.open("spotify_bg.png"))
+    label = Label(frame, image=photo)
+    label.place(x=0, y=0, relwidth=1, relheight=1)
+
+    center_frame = Frame(frame, relief='raised', borderwidth=2)
+    center_frame.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+    Label(center_frame, text='Full Name', width=8).pack()
+    Label(center_frame, text='Education', width=8).pack()
+
+    root.mainloop()
+
+
+
+
     main_window = tkinter.Tk(screenName="song-alyze")
     main_window["bg"] = "black"
     img = PhotoImage(file="spotify_bg.png")
