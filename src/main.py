@@ -2,37 +2,48 @@ import spotify  # Local import of spotify.py
 import tkinter  # GUI  Reference: https://www.tutorialspoint.com/python/python_gui_programming.htm
 from tkinter import font as tkFont  # tkinter fonts
 from tkinter import messagebox  # tkinter message box
-from tkinter import PhotoImage
-from tkinter import Canvas
 import ttkthemes  # tkinter themes
-from tkinter import filedialog as fd  # tkinter file dialog
-import os
 from cache import cache  # Used to cache API calls
 from spotipy.exceptions import SpotifyException
 from tkinter import *
 from PIL import Image, ImageTk
 
+
 # Main function
 # Builds and sets up GUI
 def main():
     root = Tk()
-    root.title("Title")
+    root.title("Song-alyze")
+    root["bg"] = "black"
     root.geometry('1600x1600')
-    root.minsize(1600, 1600)
-    frame = Frame(root, width=1600, height=1600, relief='raised', borderwidth=2)
-    frame.pack(fill=BOTH, expand=YES)
-    frame.pack_propagate(False)
+    root.minsize(1600, 1600)  # minimum size of the gui
+    base_frame = Frame(root, width=2200, height=2200, borderwidth=2, bg="black")
+    base_frame.pack(fill=BOTH, expand=YES)
+    base_frame.pack_propagate(False)
 
-    photo = ImageTk.PhotoImage(Image.open("spotify_bg.png"))
-    label = Label(frame, image=photo)
+    btn_dim = {"w": 15, "h": 2}
+    btn_pad = {"x": 10, "y": 10}
+
+    photo = ImageTk.PhotoImage(Image.open("spotify_bg.png").resize((1600, 1600)))
+    label = Label(base_frame, image=photo, bg="black")
     label.place(x=0, y=0, relwidth=1, relheight=1)
 
-    center_frame = Frame(frame, relief='raised', borderwidth=2)
-    center_frame.place(relx=0.5, rely=0.5, anchor=CENTER)
+    center_frame1 = Frame(base_frame, borderwidth=2, bg="#1ed760", width=btn_dim["w"],
+                          height=btn_dim["h"])
+    center_frame1.place(relx=0.6, rely=.9, anchor=SW)
+    center_frame2 = Frame(base_frame, borderwidth=2, bg="#1ed760", width=btn_dim["w"],
+                          height=btn_dim["h"])
+    center_frame2.place(relx=0.4, rely=.9, anchor=SE)
 
-    Label(center_frame, text='Full Name', width=8).pack()
-    Label(center_frame, text='Education', width=8).pack()
+    # Top Tracks & Artists button
+    top_btn = tkinter.Button(center_frame1, text="New Comparison", width=btn_dim["w"],
+                             height=btn_dim["h"], command=lambda: show_dual_list_dialog("Top"))
+    # Rec Tracks & Artists button
+    rec_btn = tkinter.Button(center_frame2, text="View Playlist", width=btn_dim["w"],
+                             height=btn_dim["h"], command=lambda: show_dual_list_dialog("Rec"))
 
+    top_btn.grid(row=0, column=0, padx=btn_pad["x"], pady=btn_pad["y"])
+    rec_btn.grid(row=0, column=1, padx=btn_pad["x"], pady=btn_pad["y"])
     root.mainloop()
 
 
