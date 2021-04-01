@@ -21,6 +21,15 @@ def main():
     base_frame.pack(fill=BOTH, expand=YES)
     base_frame.pack_propagate(False)
 
+    window = Toplevel()
+
+    label = Label(window, text="Hello World!")
+    label.pack(fill='x', padx=50, pady=5)
+
+    button_close = Button(window, text="Close", command=window.destroy)
+    button_close.pack(fill='x')
+
+
     btn_dim = {"w": 15, "h": 2}
     btn_pad = {"x": 10, "y": 10}
 
@@ -35,12 +44,21 @@ def main():
                           height=btn_dim["h"])
     center_frame2.place(relx=0.4, rely=.9, anchor=SE)
 
+    width = 100
+    height = 100
+    img = Image.open("spotify_bg.png")
+    img = img.resize((width, height), Image.ANTIALIAS)
+    button_img = ImageTk.PhotoImage(img)
+
     # Top Tracks & Artists button
-    top_btn = tkinter.Button(center_frame1, text="New Comparison", width=btn_dim["w"],
-                             height=btn_dim["h"], command=lambda: show_dual_list_dialog("Top"))
+    top_btn = tkinter.Button(center_frame1, text="  New Comparison", width=400,
+                             height=150, command=lambda: show_dual_list_dialog("Top"),
+                             image=button_img, compound="left")
+    top_btn.config(image=button_img)
     # Rec Tracks & Artists button
-    rec_btn = tkinter.Button(center_frame2, text="View Playlist", width=btn_dim["w"],
-                             height=btn_dim["h"], command=lambda: show_dual_list_dialog("Rec"))
+    rec_btn = tkinter.Button(center_frame2, text="        View Playlist", width=400,
+                             height=150, command=lambda: show_dual_list_dialog("Rec"),
+                             image=button_img, compound="left")
 
     top_btn.grid(row=0, column=0, padx=btn_pad["x"], pady=btn_pad["y"])
     rec_btn.grid(row=0, column=1, padx=btn_pad["x"], pady=btn_pad["y"])
