@@ -15,7 +15,8 @@ __SPOTIFY_SCOPES__ = "user-top-read playlist-read-private user-read-recently-pla
 __AUTH_TOKEN__ = spotipy.prompt_for_user_token(username="jdcornwell", scope=__SPOTIFY_SCOPES__,
                                                client_id="33b20c9a6bd14aa49a6c932aec63e4ac",
                                                client_secret="f8c80aaad212464c901e38d791c81431",
-                                               redirect_uri="http://localhost:8080/")
+                                               redirect_uri="http://localhost:8080/",
+                                               show_dialog=True)
 print("Attempting Authentication with Spotify...")
 #  If AUTH_TOKEN is legit...
 

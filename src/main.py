@@ -1,17 +1,18 @@
-import spotify  # Local import of spotify.py
 import tkinter  # GUI  Reference: https://www.tutorialspoint.com/python/python_gui_programming.htm
-from tkinter import font as tkFont  # tkinter fonts
+from tkinter import *
 from tkinter import messagebox  # tkinter message box
-import ttkthemes  # tkinter themes
+import spotify  # Local import of spotify.py
+from PIL import Image, ImageTk
 from cache import cache  # Used to cache API calls
 from spotipy.exceptions import SpotifyException
-from tkinter import *
-from PIL import Image, ImageTk
+
+users: int = 0  # number of users who are being compared
 
 
 # Main function
 # Builds and sets up GUI
 def main():
+    global users
     root = Tk()
     root.title("Song-alyze")
     root["bg"] = "black"
@@ -20,16 +21,12 @@ def main():
     base_frame = Frame(root, width=2200, height=2200, borderwidth=2, bg="black")
     base_frame.pack(fill=BOTH, expand=YES)
     base_frame.pack_propagate(False)
+    root.withdraw()  # make root invisible during popup lifetime
 
-    window = Toplevel()
+    # create a user login window
+    gen_popup(root)
 
-    label = Label(window, text="Hello World!")
-    label.pack(fill='x', padx=50, pady=5)
-
-    button_close = Button(window, text="Close", command=window.destroy)
-    button_close.pack(fill='x')
-
-
+    # add elements for the main application
     btn_dim = {"w": 15, "h": 2}
     btn_pad = {"x": 10, "y": 10}
 
@@ -50,64 +47,66 @@ def main():
     img = img.resize((width, height), Image.ANTIALIAS)
     button_img = ImageTk.PhotoImage(img)
 
+    # Rec Tracks & Artists button
+    rec_btn = tkinter.Button(center_frame2, text="     Add User", width=400,
+                             height=150, command=lambda: show_dual_list_dialog("Rec"),
+                             image=button_img, compound="left")
     # Top Tracks & Artists button
-    top_btn = tkinter.Button(center_frame1, text="  New Comparison", width=400,
+    top_btn = tkinter.Button(center_frame1, text="  Generate Playlist", width=400,
                              height=150, command=lambda: show_dual_list_dialog("Top"),
                              image=button_img, compound="left")
     top_btn.config(image=button_img)
-    # Rec Tracks & Artists button
-    rec_btn = tkinter.Button(center_frame2, text="        View Playlist", width=400,
-                             height=150, command=lambda: show_dual_list_dialog("Rec"),
-                             image=button_img, compound="left")
 
     top_btn.grid(row=0, column=0, padx=btn_pad["x"], pady=btn_pad["y"])
     rec_btn.grid(row=0, column=1, padx=btn_pad["x"], pady=btn_pad["y"])
     root.mainloop()
 
 
+# Function to create a new user login popup window
+def gen_popup(root):
+    login_window = Toplevel()
+
+    # function that is called when the user closes the popup
+    def on_closing():
+        popup_close(login_window, root)
+
+    login_window.protocol("WM_DELETE_WINDOW", on_closing)
+    label = Label(login_window, text="Enter User Login Info:")
+    label.pack(fill='x', padx=50, pady=5)
+    username = Text(login_window, bg="#1ed760", fg="black", height=1, width=20)
+    username.pack()
+    password = Text(login_window, bg="#1ed760", fg="black", height=1, width=20)
+    password.pack()
+    button_close = Button(login_window, text="Login", command=lambda: add_user(username.get("1.0", "end-1c"),
+                                                                               password.get("1.0", "end-1c"),
+                                                                               login_window, root))
+    button_close.pack(fill='x')
 
 
-    main_window = tkinter.Tk(screenName="song-alyze")
-    main_window["bg"] = "black"
-    img = PhotoImage(file="spotify_bg.png")
-    bg_label = tkinter.Label(main_window, bg="black", image=img)
-    bg_label.pack()
-    main_window.title("song-alyze")
-    theme = ttkthemes.ThemedStyle(main_window)
-    theme.theme_use("arc")  # Never got this to work. Not sure why
-    info_frame = tkinter.Frame(main_window, bg="black")
-    content_frame = tkinter.Frame(main_window)
-    info_frame.pack()
-    content_frame.pack()
-    center_in_screen(main_window)
-    font = tkFont.Font(family="Segoe UI", size=11)
-    main_window.option_add("*Font", font)
-    btn_dim = {"w": 30, "h": 5}
-    btn_pad = {"x": 10, "y": 10}
+# Function to take user login info and validate it. If
+# the login information is correct, add top songs to the
+# list used for comparison and close the window
+def add_user(username, password, window, root):
+    global users
+    print(username + "\n" + password)
+    # if the login is valid, increment users and close
+    if True:
+        users += 1
+    popup_close(window, root)
 
-    # Welcome label
-    welcome_label_txt = tkinter.StringVar()
-    welcome_label_txt.set("Welcome {}".format(spotify.sp.current_user()["display_name"]))
-    wel_lbl = tkinter.Label(info_frame, textvariable=welcome_label_txt, bg="black", fg="lime")
-    title_label_txt = tkinter.StringVar()
-    title_label_txt.set("song-alyze")
-    title_lbl = tkinter.Label(info_frame, textvariable=title_label_txt, font=("Segoe UI Bold", 14),
-                              bg="black", fg="lime")
-    # Top Tracks & Artists button
-    top_btn = tkinter.Button(content_frame, text="Top Tracks & Artists", width=btn_dim["w"],
-                             height=btn_dim["h"], command=lambda: show_dual_list_dialog("Top"))
-    # Rec Tracks & Artists button
-    rec_btn = tkinter.Button(content_frame, text="Recommended Tracks & Artists", width=btn_dim["w"],
-                             height=btn_dim["h"], command=lambda: show_dual_list_dialog("Rec"))
-    title_lbl.grid(row=0, column=0)
-    wel_lbl.grid(row=1, column=0)
-    top_btn.grid(row=0, column=0, padx=btn_pad["x"], pady=btn_pad["y"])
-    rec_btn.grid(row=0, column=1, padx=btn_pad["x"], pady=btn_pad["y"])
-    main_window.pack_slaves()
-    main_window.mainloop()
+# Function to close the user login popup window and
+# make the root window visible
+def popup_close(window, root):
+    global users
+    if users == 0:
+        messagebox.showerror("Cannot Exit", "You must supply at least one user to the program.")
+        return
+    window.destroy()
+    root.deiconify()
 
 
-# Function that creates a new window with 2 list boxes
+# Function that creates a new window with 2 list boxes that
+# display the generated playlist and the top artists
 # Called by Top and Rec buttons
 def show_dual_list_dialog(type):
     # Used as a pointer to point to the current list in this dialog
@@ -158,26 +157,31 @@ def show_dual_list_dialog(type):
     def get_content(time_frame="long_term", limit=50):
         if type == "Top":
             # Top Tracks stuff
-            top_tracks = spotify.get_top_tracks(limit=50, time_range=time_frame) if not "tt-" + time_frame in cache else cache["tt-" + time_frame]
+            top_tracks = spotify.get_top_tracks(limit=50, time_range=time_frame) if not "tt-" + time_frame in cache else \
+            cache["tt-" + time_frame]
             cache["tt-" + time_frame] = top_tracks
             cache["cur"] = cache["tt-" + time_frame]
             disp_listbox(0, top_tracks, True, True, limit)
             # Top Artists stuff
-            top_artists = spotify.get_top_artists(limit=50, time_range=time_frame) if not "ta-" + time_frame in cache else cache[
+            top_artists = spotify.get_top_artists(limit=50,
+                                                  time_range=time_frame) if not "ta-" + time_frame in cache else cache[
                 "ta-" + time_frame]
             cache["ta-" + time_frame] = top_artists
             disp_listbox(1, top_artists, True, False, limit)
         elif type == "Rec":
             # Rec Tracks stuff
             top_tracks = spotify.get_top_tracks(limit=50, time_range=time_frame) if not "tt-" + time_frame in cache else \
-            cache["tt-" + time_frame]
-            rec_tracks = spotify.get_recommended_tracks(limit=50, track_seeds=[x["id"] for x in top_tracks[:5]]) if not "rt-" + time_frame in cache else cache["rt-" + time_frame]
+                cache["tt-" + time_frame]
+            rec_tracks = spotify.get_recommended_tracks(limit=50, track_seeds=[x["id"] for x in top_tracks[
+                                                                                                :5]]) if not "rt-" + time_frame in cache else \
+            cache["rt-" + time_frame]
             cache["rt-" + time_frame] = rec_tracks
             cache["cur"] = cache["rt-" + time_frame]
             disp_listbox(0, rec_tracks, False, True, limit)
             # Rec Artists stuff
-            rec_artists = spotify.get_recommended_artists(time_range=time_frame, limit=50) if not "ra-" + time_frame in cache else \
-            cache["ra-" + time_frame]
+            rec_artists = spotify.get_recommended_artists(time_range=time_frame,
+                                                          limit=50) if not "ra-" + time_frame in cache else \
+                cache["ra-" + time_frame]
             cache["ra-" + time_frame] = rec_artists
             disp_listbox(1, rec_artists, False, False, limit)
         else:
@@ -227,5 +231,6 @@ def center_in_screen(window):
 
 if __name__ == "__main__":
     import ctypes
+
     ctypes.windll.shcore.SetProcessDpiAwareness(1)  # solves blurry tkinter widgets...thanks stack overflow
     main()
