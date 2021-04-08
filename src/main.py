@@ -94,6 +94,7 @@ def add_user(username, password, window, root):
         users += 1
     popup_close(window, root)
 
+
 # Function to close the user login popup window and
 # make the root window visible
 def popup_close(window, root):
