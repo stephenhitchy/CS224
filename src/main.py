@@ -1,6 +1,7 @@
-import tkinter  # GUI  Reference: https://www.tutorialspoint.com/python/python_gui_programming.htm
+import tkinter
 from tkinter import *
 from tkinter import messagebox  # tkinter message box
+# this import will immediately run code to get a user
 import spotify  # Local import of spotify.py
 from PIL import Image, ImageTk
 from cache import cache  # Used to cache API calls
@@ -30,17 +31,20 @@ def main():
     btn_dim = {"w": 15, "h": 2}
     btn_pad = {"x": 10, "y": 10}
 
+    # background image setup
     photo = ImageTk.PhotoImage(Image.open("spotify_bg.png").resize((1600, 1600)))
     label = Label(base_frame, image=photo, bg="black")
     label.place(x=0, y=0, relwidth=1, relheight=1)
 
+    # frames for main buttons
     center_frame1 = Frame(base_frame, borderwidth=2, bg="#1ed760", width=btn_dim["w"],
                           height=btn_dim["h"])
-    center_frame1.place(relx=0.6, rely=.9, anchor=SW)
+    center_frame1.place(relx=0.6, rely=0.9, anchor=SW)
     center_frame2 = Frame(base_frame, borderwidth=2, bg="#1ed760", width=btn_dim["w"],
                           height=btn_dim["h"])
     center_frame2.place(relx=0.4, rely=.9, anchor=SE)
 
+    # image for buttons
     width = 100
     height = 100
     img = Image.open("spotify_bg.png")
@@ -64,34 +68,34 @@ def main():
 
 # Function to create a new user login popup window
 def gen_popup(root):
-    login_window = Toplevel()
+    login_window = Toplevel(root)
+    login_window["bg"] = "black"
+    login_window.geometry('400x400')
+    base_frame = Frame(login_window, width=400, height=200, borderwidth=2, bg="black")
+    login_window.minsize(400, 200)
+    base_frame.pack(fill=BOTH, expand=YES)
+    base_frame.pack_propagate(False)
 
     # function that is called when the user closes the popup
     def on_closing():
         popup_close(login_window, root)
 
     login_window.protocol("WM_DELETE_WINDOW", on_closing)
-    label = Label(login_window, text="Enter User Login Info:")
+    label = Label(base_frame, text="Enter User Login Info:")
     label.pack(fill='x', padx=50, pady=5)
-    username = Text(login_window, bg="#1ed760", fg="black", height=1, width=20)
+    username = Text(base_frame, bg="#1ed760", fg="black", height=1, width=20, padx=50, pady=5)
     username.pack()
-    password = Text(login_window, bg="#1ed760", fg="black", height=1, width=20)
-    password.pack()
-    button_close = Button(login_window, text="Login", command=lambda: add_user(username.get("1.0", "end-1c"),
-                                                                               password.get("1.0", "end-1c"),
-                                                                               login_window, root))
+    button_close = Button(base_frame, text="Login", command=lambda: add_user(username.get("1.0", "end-1c"),
+                                                                             base_frame, root))
     button_close.pack(fill='x')
 
 
 # Function to take user login info and validate it. If
 # the login information is correct, add top songs to the
 # list used for comparison and close the window
-def add_user(username, password, window, root):
+def add_user(username, window, root):
     global users
-    print(username + "\n" + password)
-    # if the login is valid, increment users and close
-    if True:
-        users += 1
+    users += 1
     popup_close(window, root)
 
 
@@ -109,20 +113,20 @@ def popup_close(window, root):
 # Function that creates a new window with 2 list boxes that
 # display the generated playlist and the top artists
 # Called by Top and Rec buttons
-def show_dual_list_dialog(type):
+def show_dual_list_dialog(name):
     # Used as a pointer to point to the current list in this dialog
     # so that the create a playlist buttons knows which list to use
     cur_list = []
 
     # Function to handle the create playlist button
-    def create_playlist_btn_click(list):
-        spotify.create_playlist([list[i]["id"] for i in range(int(default_num_option.get()))],
-                                name="Your {} Tracks".format(type))
+    def create_playlist_btn_click(id_list):
+        spotify.create_playlist([id_list[i]["id"] for i in range(int(default_num_option.get()))],
+                                name="Your {} Tracks".format(name))
         messagebox.showinfo("Success", "Playlist Created!")
 
-    def play_playlist_btn_click(list):
+    def play_playlist_btn_click(id_source):
         ids = []
-        for t in list:
+        for t in id_source:
             e = t["id"]
             ids.append(e)
         try:
@@ -138,51 +142,53 @@ def show_dual_list_dialog(type):
         except NameError:
             get_content(time_frame=tf)
 
-    def disp_listbox(order, list, number, include_artist, limit):
+    def disp_listbox(order, source_list, number, include_artist, limit):
         lb = tkinter.Listbox(listbox_frame, width=50, height=25, selectmode=tkinter.BROWSE)
         index = 1
-        for i in range(0, min(len(list), limit)):
+        for i in range(0, min(len(source_list), limit)):
             if number:
                 if include_artist:
-                    lb.insert(index, "{}.  {}  -  {}".format(index, list[i]["name"], list[i]["artist"]))
+                    lb.insert(index, "{}.  {}  -  {}".format(index, source_list[i]["name"],
+                                                             source_list[i]["artist"]))
                 else:
-                    lb.insert(index, "{}.  {}".format(index, list[i]["name"]))
+                    lb.insert(index, "{}.  {}".format(index, source_list[i]["name"]))
             else:
                 if include_artist:
-                    lb.insert(index, "{}  -  {}".format(list[i]["name"], list[i]["artist"]))
+                    lb.insert(index, "{}  -  {}".format(source_list[i]["name"], source_list[i]["artist"]))
                 else:
-                    lb.insert(index, "{}".format(list[i]["name"]))
+                    lb.insert(index, "{}".format(source_list[i]["name"]))
             index += 1
         lb.grid(row=0, column=order, padx=5, pady=5)
 
     def get_content(time_frame="long_term", limit=50):
-        if type == "Top":
+        if name == "Top":
             # Top Tracks stuff
-            top_tracks = spotify.get_top_tracks(limit=50, time_range=time_frame) if not "tt-" + time_frame in cache else \
-            cache["tt-" + time_frame]
+            top_tracks = spotify.get_top_tracks(limit=50, time_range=time_frame) \
+                if not "tt-" + time_frame in cache else cache["tt-" + time_frame]
             cache["tt-" + time_frame] = top_tracks
             cache["cur"] = cache["tt-" + time_frame]
             disp_listbox(0, top_tracks, True, True, limit)
             # Top Artists stuff
-            top_artists = spotify.get_top_artists(limit=50,
-                                                  time_range=time_frame) if not "ta-" + time_frame in cache else cache[
-                "ta-" + time_frame]
+            top_artists = spotify.get_top_artists(limit=50, time_range=time_frame) \
+                if not "ta-" + time_frame in cache \
+                else cache["ta-" + time_frame]
             cache["ta-" + time_frame] = top_artists
             disp_listbox(1, top_artists, True, False, limit)
-        elif type == "Rec":
+        elif name == "Rec":
             # Rec Tracks stuff
-            top_tracks = spotify.get_top_tracks(limit=50, time_range=time_frame) if not "tt-" + time_frame in cache else \
-                cache["tt-" + time_frame]
-            rec_tracks = spotify.get_recommended_tracks(limit=50, track_seeds=[x["id"] for x in top_tracks[
-                                                                                                :5]]) if not "rt-" + time_frame in cache else \
-            cache["rt-" + time_frame]
+            top_tracks = spotify.get_top_tracks(limit=50, time_range=time_frame) \
+                if not "tt-" + time_frame in cache \
+                else cache["tt-" + time_frame]
+            rec_tracks = spotify.get_recommended_tracks(limit=50, track_seeds=[x["id"] for x in top_tracks[:5]]) \
+                if not "rt-" + time_frame in cache \
+                else cache["rt-" + time_frame]
             cache["rt-" + time_frame] = rec_tracks
             cache["cur"] = cache["rt-" + time_frame]
             disp_listbox(0, rec_tracks, False, True, limit)
             # Rec Artists stuff
-            rec_artists = spotify.get_recommended_artists(time_range=time_frame,
-                                                          limit=50) if not "ra-" + time_frame in cache else \
-                cache["ra-" + time_frame]
+            rec_artists = spotify.get_recommended_artists(time_range=time_frame, limit=50) \
+                if not "ra-" + time_frame in cache \
+                else cache["ra-" + time_frame]
             cache["ra-" + time_frame] = rec_artists
             disp_listbox(1, rec_artists, False, False, limit)
         else:
@@ -195,7 +201,7 @@ def show_dual_list_dialog(type):
     option_frame.grid(row=0)
     listbox_frame = tkinter.Frame(top)
     listbox_frame.grid(row=1)
-    top.title(type + " Artists & Tracks")
+    top.title(name + " Artists & Tracks")
     top.resizable(False, False)
 
     # option frame widgets
@@ -225,13 +231,12 @@ def show_dual_list_dialog(type):
 def center_in_screen(window):
     screen_width = window.winfo_screenwidth()
     screen_height = window.winfo_screenheight()
-    x = (screen_width / 2) - 375  # can't figure out how to get current windows size
+    x = (screen_width / 2) - 375
     y = (screen_height / 2) - 300
     window.geometry("+%d+%d" % (x, y))
 
 
 if __name__ == "__main__":
     import ctypes
-
     ctypes.windll.shcore.SetProcessDpiAwareness(1)  # solves blurry tkinter widgets...thanks stack overflow
     main()

@@ -12,7 +12,7 @@ __SPOTIFY_SCOPES__ = "user-top-read playlist-read-private user-read-recently-pla
                      "playlist-modify-private playlist-modify-public user-library-read " \
                      "user-modify-playback-state"  # Should not be changed after this line
 # Authorization token specific to the users account
-__AUTH_TOKEN__ = spotipy.prompt_for_user_token(username="jdcornwell", scope=__SPOTIFY_SCOPES__,
+__AUTH_TOKEN__ = spotipy.prompt_for_user_token(username="", scope=__SPOTIFY_SCOPES__,
                                                client_id="33b20c9a6bd14aa49a6c932aec63e4ac",
                                                client_secret="f8c80aaad212464c901e38d791c81431",
                                                redirect_uri="http://localhost:8080/",
