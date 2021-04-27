@@ -47,6 +47,13 @@ def main():
     img = img.resize((width, height), Image.ANTIALIAS)
     button_img = ImageTk.PhotoImage(img)
 
+    # -------------------------------------------------------------------------------------------------------------------------------
+    # Test calling code before show_dual_list_dialog
+    spotify.get_user_info()
+    spotify.get_combo_playlist()
+    # -------------------------------------------------------------------------------------------------------------------------------
+
+
     # Rec Tracks & Artists button
     rec_btn = tkinter.Button(center_frame2, text="     Add User", width=400,
                              height=150, command=lambda: show_dual_list_dialog("Rec"),
@@ -59,7 +66,16 @@ def main():
 
     top_btn.grid(row=0, column=0, padx=btn_pad["x"], pady=btn_pad["y"])
     rec_btn.grid(row=0, column=1, padx=btn_pad["x"], pady=btn_pad["y"])
+
+    # -------------------------------------------------------------------------------------------------------------------------------
+    # # Test calling code after show_dual_list_dialog
+    # spotify.get_user_info()
+    # spotify.get_combo_playlist()
+    # -------------------------------------------------------------------------------------------------------------------------------
+
     root.mainloop()
+
+
 
 
 # Function to create a new user login popup window
@@ -235,3 +251,6 @@ if __name__ == "__main__":
 
     ctypes.windll.shcore.SetProcessDpiAwareness(1)  # solves blurry tkinter widgets...thanks stack overflow
     main()
+
+
+
