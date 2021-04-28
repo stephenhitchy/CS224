@@ -202,8 +202,8 @@ def artist_count():
     print(len(songs))
     dictionary = {}
     for s in songs:
-        s = s[s.find(">")+1:]
-        a = s[s.find("<")+1:s.find(">")]
+        s = s[s.find(">") + 1:]
+        a = s[s.find("<") + 1:s.find(">")]
         dict[a] = dictionary[a] + 1 if a in dict else 1
     sort = sorted(dictionary.items(), reverse=True, key=lambda e: e[1])
     return sort
@@ -220,27 +220,28 @@ def play_songs(id_list):
 
 # Write the information about a user's top tracks and top artists to a file
 # users is an array of users that we will be combining their tracks together
-def get_user_info(users =[]):
+def get_user_info(users=[]):
+    # Checks to see if the file exists or if the file exists and is empty
+    if not (os.path.exists("user_playlist.txt")) or os.stat("user_playlist.txt").st_size == 0:
+        # Creates the file if it doesn't exist/Prepare to write to the file
+        f = open("user_playlist.txt", "w")
 
-    if not (os.path.exists("user_playlist.txt")) or os.stat("user_playlist.txt").st_size == 0: # Checks to see if the file exists or if the file exists and is empty
-        f = open("user_playlist.txt", "w") # Creates the file if it doesn't exist/Prepare to write to the file
-
-        artists_seeds = get_top_artists() # Gets top artists from current user
-        artist_id_list =[] # list to store ids from artists
+        artists_seeds = get_top_artists()  # Gets top artists from current user
+        artist_id_list = []  # list to store ids from artists
         for artist in artists_seeds:
-            artist_id_list.append(artist['id']) # Store ids into the list
+            artist_id_list.append(artist['id'])  # Store ids into the list
 
-        track_seeds = get_top_tracks() # Get top tracks from current user
-        track_id_list = [] # List to store ids from tracks
+        track_seeds = get_top_tracks()  # Get top tracks from current user
+        track_id_list = []  # List to store ids from tracks
         for track in track_seeds:
             track_id_list.append(track['id'])  # Store ids into the list
 
         # Each user's info will take up two lines
-        f.write("{}\n".format(artist_id_list)) # Write the list of top artist ids to the file
-        f.write("{}\n".format(track_id_list)) # Write the list of top track ids to the file
+        f.write("{}\n".format(artist_id_list))  # Write the list of top artist ids to the file
+        f.write("{}\n".format(track_id_list))  # Write the list of top track ids to the file
 
-    else: # Just append the next set of data
-        f = open("user_playlist.txt", "a") # Creates the file if it doesn't exist/Prepare to write to the file
+    else:  # Just append the next set of data
+        f = open("user_playlist.txt", "a")  # Creates the file if it doesn't exist/Prepare to write to the file
 
         artists_seeds = get_top_artists()  # Gets top artists from current user
         artist_id_list = []  # list to store ids from artists
@@ -256,111 +257,138 @@ def get_user_info(users =[]):
         f.write("{}\n".format(artist_id_list))  # Write the list of top artist ids to the file
         f.write("{}\n".format(track_id_list))  # Write teh list of top track ids to the file
 
+
 # Combine the top tracks and top artists from all users to find recommended artists and tracks
 # and returns the result as a dictionary with artist list and track list
 def get_combo_playlist():
-
     print(sp.current_user())
 
-    f = open("user_playlist.txt", "r") # Opens up file in read mode
-    file = f.readlines() # Reads in all the lines and puts lines into a list
-    user_dict = {} # holds dictionary representation of artist list and track list for each user
-    user_num = 1 # Tracks the amount of users starting with 1
+    f = open("user_playlist.txt", "r")  # Opens up file in read mode
+    file = f.readlines()  # Reads in all the lines and puts lines into a list
+    user_dict = {}  # holds dictionary representation of artist list and track list for each user
+    user_num = 1  # Tracks the amount of users starting with 1
 
-    for row in range(0,len(file),2): # We will loop through the list and create dictionaries for each user's data
-        str_artists_list = file[row].strip("\n").strip(']').strip('[').replace("'","") # Get rid of details so that it is a coma separated list
-        str_tracks_list = file[row+1].strip("\n").strip(']').strip('[').replace("'","") # Get rid of details so that it is a coma separated list
+    # We will loop through the list and create dictionaries for each user's data
+    for row in range(0, len(file), 2):
+        # Get rid of details so that it is a coma separated list
+        str_artists_list = file[row].strip("\n").strip(']').strip('[').replace("'", "")
+        # Get rid of details so that it is a coma separated list
+        str_tracks_list = file[row + 1].strip("\n").strip(']').strip('[').replace("'", "")
 
-        artist_list = str_artists_list.split(", ") # Make the list of artists
-        track_list = str_tracks_list.split(", ") # Make the list of tracks
+        artist_list = str_artists_list.split(", ")  # Make the list of artists
+        track_list = str_tracks_list.split(", ")  # Make the list of tracks
 
-        user_dict["user{}_artist_list".format(user_num)] = artist_list # Inserts artist list into dictionary
-        user_dict["user{}_track_list".format(user_num)] = track_list # Inserts track list into dictionary
+        user_dict["user{}_artist_list".format(user_num)] = artist_list  # Inserts artist list into dictionary
+        user_dict["user{}_track_list".format(user_num)] = track_list  # Inserts track list into dictionary
         user_num += 1
 
-    counter = 1 # Counter keeps track of which users we are currently working with
-    while len(user_dict) > 2:  # While there are more than 2 keys in the dictionary(2 keys being the userN's artist list and the userN's track list)
-        first_user_artist = "user{}_artist_list".format(counter) # creats a string that looks like a key in dictionary(i.e. {key : value}
-        first_user_track =  "user{}_track_list".format(counter) # creats a string that looks like a key in dictionary(i.e. {key : value}
+    counter = 1  # Counter keeps track of which users we are currently working with
+    # While there are more than 2 keys in the dictionary(2 keys being the userN's artist list
+    # and the userN's track list)
+    while len(user_dict) > 2:
+        # creates a string that looks like a key in dictionary(i.e. {key : value}
+        first_user_artist = "user{}_artist_list".format(counter)
+        # creates a string that looks like a key in dictionary(i.e. {key : value}
+        first_user_track = "user{}_track_list".format(counter)
         counter += 1
-        second_user_artist = "user{}_artist_list".format(counter)  # creats a string that looks like a key in dictionary(i.e. {key : value}
-        second_user_track = "user{}_track_list".format(counter)  # creats a string that looks like a key in dictionary(i.e. {key : value}
+        # creates a string that looks like a key in dictionary(i.e. {key : value}
+        second_user_artist = "user{}_artist_list".format(counter)
+        # creates a string that looks like a key in dictionary(i.e. {key : value}
+        second_user_track = "user{}_track_list".format(counter)
         counter += 1
 
-        first_user_artist = user_dict.pop(first_user_artist) # Remove the first user's artist list
-        first_user_track = user_dict.pop(first_user_track) # Remove the first user's track list
+        first_user_artist = user_dict.pop(first_user_artist)  # Remove the first user's artist list
+        first_user_track = user_dict.pop(first_user_track)  # Remove the first user's track list
 
-        second_user_artist = user_dict.pop(second_user_artist) # Remove the second user's artist list
-        second_user_track = user_dict.pop(second_user_track) # Remove the second user's track list
+        second_user_artist = user_dict.pop(second_user_artist)  # Remove the second user's artist list
+        second_user_track = user_dict.pop(second_user_track)  # Remove the second user's track list
 
-        new_list_artist = [] # New list will hold artists that will be used to find recommendations
-        new_list_track = [] # New list will hold tracks that will be used to find recommendations
+        new_list_artist = []  # New list will hold artists that will be used to find recommendations
+        new_list_track = []  # New list will hold tracks that will be used to find recommendations
 
-        for i in first_user_artist: # First we will find artists that are in both lists
-            if i in second_user_artist: # if an artist from the first user is found in the second user then we add it to the list
+        for i in first_user_artist:  # First we will find artists that are in both lists
+            # if an artist from the first user is found in the second user then we add it to the list
+            if i in second_user_artist:
                 new_list_artist.append(i)
 
-        for i in first_user_track: # Find tracks that are in both lists
-            if i in second_user_track: # if a track is in both lists add it to the new list
+        for i in first_user_track:  # Find tracks that are in both lists
+            if i in second_user_track:  # if a track is in both lists add it to the new list
                 new_list_track.append(i)
 
         first_counter = 0
         second_counter = 0
-        if len(new_list_artist) != 5 and (len(first_user_artist) > len(new_list_artist) or len(second_user_artist) > len(new_list_artist)): # We want 5 search items to pass into recommendation and check to see if we can add more artists
-            for i in range(5 - len(new_list_artist)): # Populate the list until we have 5 artists
-                if i%2 == 0: # We will add an artist from the first list to the new list
-                    for j in range(len(first_user_artist)): # We want to find a new artist to add to the list
+        # We want 5 search items to pass into recommendation and check to see if we can add more artists
+        if len(new_list_artist) != 5 and (len(first_user_artist) > len(new_list_artist)
+                                          or len(second_user_artist) > len(new_list_artist)):
+            for i in range(5 - len(new_list_artist)):  # Populate the list until we have 5 artists
+                if i % 2 == 0:  # We will add an artist from the first list to the new list
+                    for j in range(len(first_user_artist)):  # We want to find a new artist to add to the list
                         if first_user_artist[j] not in new_list_artist:
                             new_list_artist.append(first_user_artist[j])
                             break
-                        elif j == len(first_user_artist) and first_counter <= len(first_user_artist) - 1: # We reached the end and there are no new artists
-                            new_list_artist.append(first_user_artist[first_counter]) # We will add the artists located at first_counter
+                        # We reached the end and there are no new artists
+                        elif j == len(first_user_artist) and first_counter <= len(first_user_artist) - 1:
+                            # We will add the artists located at first_counter
+                            new_list_artist.append(first_user_artist[first_counter])
                             first_counter += 1
                             break
-                else: # We will add an artist from teh second list to the new list
-                    for j in range(len(second_user_artist)):  # We want to find a new artist to add to the list
+                else:  # We will add an artist from teh second list to the new list
+                    # We want to find a new artist to add to the list
+                    for j in range(len(second_user_artist)):
                         if second_user_artist[j] not in new_list_artist:
                             new_list_artist.append(second_user_artist[j])
                             break
-                        elif j == len(second_user_artist) and second_counter <= len(second_user_track) - 1:  # We reached the end and there are no new artists
-                            new_list_artist.append(second_user_artist[second_counter])  # We will add the artists located at first_counter
+                        # We reached the end and there are no new artists
+                        elif j == len(second_user_artist) and second_counter <= len(second_user_track) - 1:
+                            # We will add the artists located at first_counter
+                            new_list_artist.append(second_user_artist[second_counter])
                             second_counter += 1
                             break
-        
+
         first_counter = 0
         second_counter = 0
-        if len(new_list_track) != 5 and (len(first_user_track) > len(new_list_track) or len(second_user_track) > len(new_list_track)): # We want 5 search items to pass into recommendation and check to see if we can add more tracks
-            for i in range(5 - len(new_list_track)): # Populate the list until we have 5 tracks
-                if i%2 == 0: # We will add a track from the first list to the new list
-                    for j in range(len(first_user_track)): # We want to find a new track to add to the list
+        # We want 5 search items to pass into recommendation and check to see if we can add more tracks
+        if len(new_list_track) != 5 and (len(first_user_track) > len(new_list_track)
+                                         or len(second_user_track) > len(new_list_track)):
+            for i in range(5 - len(new_list_track)):  # Populate the list until we have 5 tracks
+                if i % 2 == 0:  # We will add a track from the first list to the new list
+                    for j in range(len(first_user_track)):  # We want to find a new track to add to the list
                         if first_user_track[j] not in new_list_track:
                             new_list_track.append(first_user_track[j])
-                        elif j == len(first_user_track) and first_counter <= len(first_user_track) - 1: # We reached the end and there are no new tracks
-                            new_list_track = first_user_track[first_counter] # We will add the tracks located at first_counter
+                        # We reached the end and there are no new tracks
+                        elif j == len(first_user_track) and first_counter <= len(first_user_track) - 1:
+                            # We will add the tracks located at first_counter
+                            new_list_track = first_user_track[first_counter]
                             first_counter += 1
-                else: # We will add an track from the second list to the new list
+                else:  # We will add an track from the second list to the new list
                     for j in range(len(second_user_track)):  # We want to find a new track to add to the list
                         if second_user_track[j] not in new_list_track:
                             new_list_track.append(second_user_track[j])
-                        elif j == len(second_user_track) and second_counter <= len(second_user_track) - 1:  # We reached the end and there are no new tracks
-                            new_list_track = second_user_track[second_counter]  # We will add the tracks located at first_counter
+                        # We reached the end and there are no new tracks
+                        elif j == len(second_user_track) and second_counter <= len(second_user_track) - 1:
+                            # We will add the tracks located at first_counter
+                            new_list_track = second_user_track[second_counter]
                             second_counter += 1
 
         # new_list_artist = first_user_artist + second_user_artist # Combine both lists to become one list
         # new_list_track = first_user_track + second_user_track # Combine both lists to become one list
 
-        user_dict["user{}_artist_list".format(user_num)] = new_list_artist # create a new key so we can compare it in the future and value such that it is the combine list
-        user_dict["user{}_track_list".format(user_num)] = new_list_track # create a new key so we can compare it in the future and value such that it is the combine list
+        # create a new key so we can compare it in the future and value such that it is the combine list
+        user_dict["user{}_artist_list".format(user_num)] = new_list_artist
+        # create a new key so we can compare it in the future and value such that it is the combine list
+        user_dict["user{}_track_list".format(user_num)] = new_list_track
         user_num += 1
 
-    key_names = user_dict.keys() # gets all the keys from the dictionary
-    rec_artists = [] # the recommended list of artists
-    rec_tracks = [] # the recommended list of tracks
-    for k in key_names: # We will find recommendations based off keys
-        print("Finding tracks based off: "+ k)
+    key_names = user_dict.keys()  # gets all the keys from the dictionary
+    rec_artists = []  # the recommended list of artists
+    rec_tracks = []  # the recommended list of tracks
+    for k in key_names:  # We will find recommendations based off keys
+        print("Finding tracks based off: " + k)
         if "artist" in k:
-            rec_artists = get_recommended_tracks(artists_seeds=user_dict[k][0:5]) # Looks for recommended artists
+            # Looks for recommended artists
+            rec_artists = get_recommended_tracks(artists_seeds=user_dict[k][0:5])
         else:
-            rec_tracks = get_recommended_tracks(track_seeds=user_dict[k][0:5]) # Looks for recommended tracks
+            # Looks for recommended tracks
+            rec_tracks = get_recommended_tracks(track_seeds=user_dict[k][0:5])
 
-    return {"rec_tracks" : rec_tracks, "rec_artists" : rec_artists}
+    return {"rec_tracks": rec_tracks, "rec_artists": rec_artists}

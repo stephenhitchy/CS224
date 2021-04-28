@@ -57,7 +57,6 @@ def main():
     spotify.get_combo_playlist()
     # -------------------------------------------------------------------------------------------------------------------------------
 
-
     # Rec Tracks & Artists button
     rec_btn = tkinter.Button(center_frame2, text="     Add User", width=400,
                              height=150, command=lambda: show_dual_list_dialog("Rec"),
@@ -78,8 +77,6 @@ def main():
     # -------------------------------------------------------------------------------------------------------------------------------
 
     root.mainloop()
-
-
 
 
 # Function to create a new user login popup window
@@ -256,6 +253,3 @@ if __name__ == "__main__":
     import ctypes
     ctypes.windll.shcore.SetProcessDpiAwareness(1)  # solves blurry tkinter widgets...thanks stack overflow
     main()
-
-
-
