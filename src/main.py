@@ -55,14 +55,14 @@ def main():
     # -------------------------------------------------------------------------------------------------------------------------------
 
     # Add User button
-    add_btn = tkinter.Button(center_frame2, text="     Add User", width=400,
+    add_btn = tkinter.Button(center_frame2, text="Add User", width=400,
                              height=150, command=lambda: gen_popup(root, button_img),
-                             image=button_img, compound="left")
+                             image=button_img, compound="left", bg="black", fg="#1ed760")
 
     # Generate Playlist button
-    gen_btn = tkinter.Button(center_frame1, text="  Generate Playlist", width=400,
-                             height=150, command=lambda: show_dual_list_dialog("Top"),
-                             image=button_img, compound="left")
+    gen_btn = tkinter.Button(center_frame1, text="Generate Playlist", width=400,
+                             height=150, command=lambda: show_dual_list_dialog("Top", button_img),
+                             image=button_img, compound="left", bg="black", fg="#1ed760")
 
     gen_btn.grid(row=0, column=0, padx=btn_pad["x"], pady=btn_pad["y"])
     add_btn.grid(row=0, column=1, padx=btn_pad["x"], pady=btn_pad["y"])
@@ -111,6 +111,7 @@ def gen_popup(root, button_img):
 # close the window
 def add_user(username, window, root):
     global users
+    spotify.get_user_info()
     users += 1
     popup_close(window, root)
 
@@ -129,7 +130,7 @@ def popup_close(window, root):
 # Function that creates a new window with 2 list boxes that
 # display the generated playlist and the top artists
 # Called by Top and Rec buttons
-def show_dual_list_dialog(name):
+def show_dual_list_dialog(name, button_img):
     # Used as a pointer to point to the current list in this dialog
     # so that the create a playlist buttons knows which list to use
     cur_list = []
@@ -159,7 +160,8 @@ def show_dual_list_dialog(name):
             get_content(time_frame=tf)
 
     def disp_listbox(order, source_list, number, include_artist, limit):
-        lb = tkinter.Listbox(listbox_frame, width=50, height=25, selectmode=tkinter.BROWSE)
+        lb = tkinter.Listbox(listbox_frame, width=50, height=25, selectmode=tkinter.BROWSE,
+                             bg="black", fg="#1ed760", borderwidth=0.0)
         index = 1
         for i in range(0, min(len(source_list), limit)):
             if number:
@@ -213,32 +215,53 @@ def show_dual_list_dialog(name):
 
     top = tkinter.Toplevel()
     top.grab_set()
+    top["bg"] = "black"
     option_frame = tkinter.Frame(top)
+    option_frame["bg"] = "black"
     option_frame.grid(row=0)
+    label_frame = tkinter.Frame(top)
+    label_frame["bg"] = "black"
+    label_frame.grid(row=1, pady=5)
     listbox_frame = tkinter.Frame(top)
-    listbox_frame.grid(row=1)
+    listbox_frame["bg"] = "#1ed760"
+    listbox_frame.grid(row=2)
     top.title(name + " Artists & Tracks")
     top.resizable(False, False)
 
     # option frame widgets
-    gen_playlist_btn = tkinter.Button(option_frame, text="Create Playlist", width=15, height=1,
-                                      command=lambda: create_playlist_btn_click(cache["cur"]))
+    gen_playlist_btn = tkinter.Button(option_frame, text="Create Playlist", width=400, height=150,
+                                      command=lambda: create_playlist_btn_click(cache["cur"]),
+                                      image=button_img, bg="black", fg="#1ed760", compound="left",
+                                      relief=RIDGE)
     gen_playlist_btn.grid(row=0, column=0, padx=5, pady=5)
     time_frame_options = ["Short Term", "Medium Term", "Long Term"]
     default_timeframe_option = tkinter.StringVar(option_frame)
     default_timeframe_option.trace("w", on_dropdown_change)
     default_timeframe_option.set(time_frame_options[2])
     time_frame_menu = tkinter.OptionMenu(option_frame, default_timeframe_option, *time_frame_options)
-    time_frame_menu.grid(row=0, column=1, padx=5, pady=5)
+    time_frame_menu["bg"] = "black"
+    time_frame_menu["fg"] = "#1ed760"
+    time_frame_menu["highlightthickness"] = 0.1
+    time_frame_menu.grid(row=0, column=1, padx=5, pady=5, sticky=tkinter.NSEW)
     number_options = [10, 25, 50]
     default_num_option = tkinter.StringVar(option_frame)
     default_num_option.trace("w", on_dropdown_change)
     default_num_option.set(number_options[2])
     number_menu = tkinter.OptionMenu(option_frame, default_num_option, *number_options)
-    number_menu.grid(row=0, column=2, padx=5, pady=5)
-    gen_playlist_btn = tkinter.Button(option_frame, text="Play Playlist", width=15, height=1,
-                                      command=lambda: play_playlist_btn_click(cache["cur"]))
+    number_menu["bg"] = "black"
+    number_menu["fg"] = "#1ed760"
+    number_menu["highlightthickness"] = 0.1
+    number_menu.grid(row=0, column=2, padx=5, pady=5, sticky=tkinter.NSEW)
+    gen_playlist_btn = tkinter.Button(option_frame, text="Play Playlist", width=400, height=150,
+                                      command=lambda: play_playlist_btn_click(cache["cur"]),
+                                      image=button_img, bg="black", fg="#1ed760", compound="left",
+                                      relief=RIDGE)
     gen_playlist_btn.grid(row=0, column=3, padx=5, pady=5)
+
+    songs_label = tkinter.Label(label_frame, text="Songs", bg="black", fg="#1ed760", font=("Arial", 12))
+    songs_label.grid(row=0, column=0, padx=425)
+    artists_label = tkinter.Label(label_frame, text="Artists", bg="black", fg="#1ed760", font=("Arial", 12))
+    artists_label.grid(row=0, column=1, padx=425)
 
     center_in_screen(top)
     top.mainloop()
