@@ -24,9 +24,6 @@ def main():
     base_frame.pack_propagate(False)
     root.withdraw()  # make root invisible during popup lifetime
 
-    # create a user login window
-    gen_popup(root)
-
     # add elements for the main application
     btn_dim = {"w": 15, "h": 2}
     btn_pad = {"x": 10, "y": 10}
@@ -57,18 +54,18 @@ def main():
     spotify.get_combo_playlist()
     # -------------------------------------------------------------------------------------------------------------------------------
 
-    # Rec Tracks & Artists button
-    rec_btn = tkinter.Button(center_frame2, text="     Add User", width=400,
-                             height=150, command=lambda: show_dual_list_dialog("Rec"),
+    # Add User button
+    add_btn = tkinter.Button(center_frame2, text="     Add User", width=400,
+                             height=150, command=lambda: gen_popup(root, button_img),
                              image=button_img, compound="left")
-    # Top Tracks & Artists button
-    top_btn = tkinter.Button(center_frame1, text="  Generate Playlist", width=400,
+
+    # Generate Playlist button
+    gen_btn = tkinter.Button(center_frame1, text="  Generate Playlist", width=400,
                              height=150, command=lambda: show_dual_list_dialog("Top"),
                              image=button_img, compound="left")
-    top_btn.config(image=button_img)
 
-    top_btn.grid(row=0, column=0, padx=btn_pad["x"], pady=btn_pad["y"])
-    rec_btn.grid(row=0, column=1, padx=btn_pad["x"], pady=btn_pad["y"])
+    gen_btn.grid(row=0, column=0, padx=btn_pad["x"], pady=btn_pad["y"])
+    add_btn.grid(row=0, column=1, padx=btn_pad["x"], pady=btn_pad["y"])
 
     # -------------------------------------------------------------------------------------------------------------------------------
     # # Test calling code after show_dual_list_dialog
@@ -76,17 +73,20 @@ def main():
     # spotify.get_combo_playlist()
     # -------------------------------------------------------------------------------------------------------------------------------
 
+    # create a user login window
+    gen_popup(root, button_img)
+
     root.mainloop()
 
 
 # Function to create a new user login popup window
-def gen_popup(root):
+def gen_popup(root, button_img):
     login_window = Toplevel(root)
     login_window["bg"] = "black"
-    login_window.geometry('400x400')
-    base_frame = Frame(login_window, width=400, height=200, borderwidth=2, bg="black")
-    login_window.minsize(400, 200)
-    base_frame.pack(fill=BOTH, expand=YES)
+    login_window.geometry('800x400')
+    login_window.resizable(False, False)
+    base_frame = Frame(login_window, width=600, height=400, borderwidth=2, bg="black")
+    base_frame.pack(expand=NO)
     base_frame.pack_propagate(False)
 
     # function that is called when the user closes the popup
@@ -94,18 +94,21 @@ def gen_popup(root):
         popup_close(login_window, root)
 
     login_window.protocol("WM_DELETE_WINDOW", on_closing)
-    label = Label(base_frame, text="Enter User Login Info:")
-    label.pack(fill='x', padx=50, pady=5)
+    label = Label(base_frame, text="Enter Your Spotify Username:", bg="black", fg="#1ed760")
+    label.grid(row=0, column=0, padx=50, pady=5)
     username = Text(base_frame, bg="#1ed760", fg="black", height=1, width=20, padx=50, pady=5)
-    username.pack()
-    button_close = Button(base_frame, text="Login", command=lambda: add_user(username.get("1.0", "end-1c"),
-                                                                             base_frame, root))
-    button_close.pack(fill='x')
+    username.grid(row=1, column=0)
+    button_close = tkinter.Button(base_frame, width=400, height=150, text="Login", command=lambda:
+                                  add_user(username.get("1.0", "end-1c"), login_window, root),
+                                  image=button_img, bg="black", fg="#1ed760", compound="left",
+                                  relief=RIDGE)
+
+    button_close.grid(row=2, column=0, padx=10, pady=10)
 
 
-# Function to take user login info and validate it. If
-# the login information is correct, add top songs to the
-# list used for comparison and close the window
+# Function to take user login info and add top
+# songs to the list used for comparison. After,
+# close the window
 def add_user(username, window, root):
     global users
     users += 1
