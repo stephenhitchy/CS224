@@ -19,11 +19,10 @@ __AUTH_TOKEN__ = spotipy.prompt_for_user_token(username="", scope=__SPOTIFY_SCOP
                                                redirect_uri="http://localhost:8080/",
                                                show_dialog=True)
 print("Attempting Authentication with Spotify...")
-#  If AUTH_TOKEN is legit...
+#  Seeing if its a valid user
 
 if __AUTH_TOKEN__:
-    # Use sp to call Spotify API functions. List of API endpoints:
-    # https://developer.spotify.com/documentation/web-api/reference/
+    # Getting the info of the Users Account
     sp = spotipy.Spotify(auth=__AUTH_TOKEN__)
     print("Connected to Spotify")
 else:
@@ -31,8 +30,9 @@ else:
     exit()
 
 
-# Function to get the users top tracks. Limit is the number of tracks to get,
-# time_range is what period of time to use: short_term, medium_term, or long_term
+# Get the top tracks of the Current User, not a user that isn't logged in.
+# limit is number of artists we want returned, and time range is how far back we want to go
+# in the accounts history, ex 10 weeks vs 10 months
 # Returns a list of dictionaries
 def get_top_tracks(limit=10, time_range="long_term"):
     tracks = sp.current_user_top_tracks(limit=limit, time_range=time_range)
@@ -43,8 +43,9 @@ def get_top_tracks(limit=10, time_range="long_term"):
     return top_list
 
 
-# Function to get the users top artists. Limit is the number of tracks to get,
-# # time_range is what period of time to use: short_term, medium_term, or long_term
+# Get the top Artists of the Current User, not a user that isn't logged in.
+# limit is number of artists we want returned, and time range is how far back we want to go
+# in the accounts history, ex 10 weeks vs 10 months
 # Returns a list of dictionaries
 def get_top_artists(limit=10, time_range="long_term"):
     tracks = sp.current_user_top_artists(limit=limit, time_range=time_range)
@@ -55,8 +56,9 @@ def get_top_artists(limit=10, time_range="long_term"):
     return top_list
 
 
-# Function to create a playlist based on a list of songs
-# tracks is a list of track id's
+# Creates a playlist on the actual spotify account
+# tracks is a list of track id's, name is the name of the playlist being created, and
+# public_playlist is if anyone else will be able to view the playlist.
 def create_playlist(tracks, name="Custom Playlist", public_playlist=False,
                     description="Custom Playlist built by song-alyze"):
     print("Current user is: " + sp.current_user()["id"])

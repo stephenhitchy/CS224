@@ -59,8 +59,8 @@ def main():
                              height=150, command=lambda: gen_popup(root, button_img),
                              image=button_img, compound="left", bg="black", fg="#1ed760")
 
-    # Generate Playlist button
-    gen_btn = tkinter.Button(center_frame1, text="Generate Playlist", width=400,
+    # Get Your Top Tracks button
+    gen_btn = tkinter.Button(center_frame1, text="Get Your Top Tracks", width=400,
                              height=150, command=lambda: show_dual_list_dialog("Top", button_img),
                              image=button_img, compound="left", bg="black", fg="#1ed760")
 
@@ -180,20 +180,26 @@ def show_dual_list_dialog(name, button_img):
 
     def get_content(time_frame="long_term", limit=50):
         if name == "Top":
-            # Top Tracks stuff
+            # Top Tracks stuff, checks to see if the playlist is in the cache
+            # (will only be in the cache if we already found the song)
+            # if it isn't in the cache we store it in there so we can get it
+            # when we are making a new playlist on the persons account.
             top_tracks = spotify.get_top_tracks(limit=50, time_range=time_frame) \
                 if not "tt-" + time_frame in cache else cache["tt-" + time_frame]
             cache["tt-" + time_frame] = top_tracks
             cache["cur"] = cache["tt-" + time_frame]
             disp_listbox(0, top_tracks, True, True, limit)
-            # Top Artists stuff
+            # Top Artists stuff, checks to see if the playlist is in the cache
+            # (will only be in the cache if we already found the song)
+            # if it isn't in the cache we store it in there so we can get it
+            # when we are making a new playlist on the persons account.
             top_artists = spotify.get_top_artists(limit=50, time_range=time_frame) \
                 if not "ta-" + time_frame in cache \
                 else cache["ta-" + time_frame]
             cache["ta-" + time_frame] = top_artists
             disp_listbox(1, top_artists, True, False, limit)
         elif name == "Rec":
-            # Rec Tracks stuff
+            # Rec Tracks stuff, same as the Top Artists Stuff above.
             top_tracks = spotify.get_top_tracks(limit=50, time_range=time_frame) \
                 if not "tt-" + time_frame in cache \
                 else cache["tt-" + time_frame]
@@ -213,6 +219,7 @@ def show_dual_list_dialog(name, button_img):
             print("Unsupported option passed into the show_list function.")
             exit()
 
+    # Making the gui look nicer
     top = tkinter.Toplevel()
     top.grab_set()
     top["bg"] = "black"
@@ -228,7 +235,8 @@ def show_dual_list_dialog(name, button_img):
     top.title(name + " Artists & Tracks")
     top.resizable(False, False)
 
-    # option frame widgets
+    # Buttons after you click into the playlist, where you see the dropdown list
+    # and the buttons at the top.
     gen_playlist_btn = tkinter.Button(option_frame, text="Create Playlist", width=400, height=150,
                                       command=lambda: create_playlist_btn_click(cache["cur"]),
                                       image=button_img, bg="black", fg="#1ed760", compound="left",
@@ -276,6 +284,7 @@ def center_in_screen(window):
 
 
 if __name__ == "__main__":
+    # Helps with the graphical issues
     import ctypes
-    ctypes.windll.shcore.SetProcessDpiAwareness(1)  # solves blurry tkinter widgets...thanks stack overflow
+    ctypes.windll.shcore.SetProcessDpiAwareness(1)
     main()
