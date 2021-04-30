@@ -36,10 +36,13 @@ def main():
     # frames for main buttons
     center_frame1 = Frame(base_frame, borderwidth=2, bg="#1ed760", width=btn_dim["w"],
                           height=btn_dim["h"])
-    center_frame1.place(relx=0.6, rely=0.9, anchor=SW)
+    center_frame1.place(relx=0.1, rely=0.9, anchor=SW)
     center_frame2 = Frame(base_frame, borderwidth=2, bg="#1ed760", width=btn_dim["w"],
                           height=btn_dim["h"])
-    center_frame2.place(relx=0.4, rely=.9, anchor=SE)
+    center_frame2.place(relx=0.9, rely=.9, anchor=SE)
+    center_frame3 = Frame(base_frame, borderwidth=2, bg="#1ed760", width=btn_dim["w"],
+                          height=btn_dim["h"])
+    center_frame3.place(relx=0.5, rely=.9, anchor=S)
 
     # image for buttons
     width = 100
@@ -63,9 +66,14 @@ def main():
     gen_btn = tkinter.Button(center_frame1, text="Get Your Top Tracks", width=400,
                              height=150, command=lambda: show_dual_list_dialog("Top", button_img),
                              image=button_img, compound="left", bg="black", fg="#1ed760")
+    # Get your recommended tracks, based off the songs you like
+    rec_btn = tkinter.Button(center_frame3, text="Your Recommended Tracks", width=400,
+                             height=150, command=lambda: show_dual_list_dialog("Rec", button_img),
+                             image=button_img, compound="left", bg="black", fg="#1ed760")
 
     gen_btn.grid(row=0, column=0, padx=btn_pad["x"], pady=btn_pad["y"])
-    add_btn.grid(row=0, column=1, padx=btn_pad["x"], pady=btn_pad["y"])
+    add_btn.grid(row=0, column=2, padx=btn_pad["x"], pady=btn_pad["y"])
+    rec_btn.grid(row=0, column=1, padx=btn_pad["x"], pady=btn_pad["y"])
 
     # -------------------------------------------------------------------------------------------------------------------------------
     # # Test calling code after show_dual_list_dialog
@@ -273,6 +281,7 @@ def show_dual_list_dialog(name, button_img):
 
     center_in_screen(top)
     top.mainloop()
+
 
 
 def center_in_screen(window):
