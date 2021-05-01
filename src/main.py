@@ -155,6 +155,11 @@ def show_dual_list_dialog(name, button_img):
                                 name="Your {} Tracks".format(name))
         # duplicate current view with slight modifications
         messagebox.showinfo("Success", "Playlist Created!")
+        try:
+            os.remove('.cache')
+        except:
+            print('cache removed')
+
 
     def play_playlist_btn_click(id_source):
         ids = []
