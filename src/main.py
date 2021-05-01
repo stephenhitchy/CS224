@@ -6,6 +6,7 @@ import spotify  # Local import of spotify.py
 from PIL import Image, ImageTk
 from cache import cache  # Used to cache API calls
 from spotipy.exceptions import SpotifyException
+import os
 
 users: int = 0  # number of users who are being compared
 
@@ -133,6 +134,7 @@ def popup_close(window, root):
         return
     window.destroy()
     root.deiconify()
+    os.remove('.cache')
 
 
 # Function that creates a new window with 2 list boxes that
