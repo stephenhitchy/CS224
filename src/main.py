@@ -134,7 +134,11 @@ def popup_close(window, root):
         return
     window.destroy()
     root.deiconify()
-    os.remove('.cache')
+    try:
+        os.remove('.cache')
+    except:
+        print('cache removed')
+
 
 
 # Function that creates a new window with 2 list boxes that
@@ -150,7 +154,7 @@ def show_dual_list_dialog(name, button_img):
         spotify.create_playlist([id_list[i]["id"] for i in range(int(default_num_option.get()))],
                                 name="Your {} Tracks".format(name))
         # duplicate current view with slight modifications
-        show_dual_list_dialog("Gen", button_img)
+        messagebox.showinfo("Success", "Playlist Created!")
 
     def play_playlist_btn_click(id_source):
         ids = []
