@@ -78,8 +78,8 @@ def main():
 
     # -------------------------------------------------------------------------------------------------------------------------------
     # # Test calling code after show_dual_list_dialog
-    # spotify.get_user_info()
-    # spotify.get_combo_playlist()
+    spotify.get_user_info()
+    spotify.get_combo_playlist()
     # -------------------------------------------------------------------------------------------------------------------------------
 
     # create a user login window
@@ -226,6 +226,23 @@ def show_dual_list_dialog(name, button_img):
                 else cache["ra-" + time_frame]
             cache["ra-" + time_frame] = rec_artists
             disp_listbox(1, rec_artists, False, False, limit)
+        elif name == "Rec":
+            # Rec Tracks stuff, same as the Top Artists Stuff above.
+            top_tracks = spotify.get_top_tracks(limit=50, time_range=time_frame) \
+                if not "tt-" + time_frame in cache \
+                else cache["tt-" + time_frame]
+            rec_tracks = spotify.get_recommended_tracks(limit=50, track_seeds=[x["id"] for x in top_tracks[:5]]) \
+                if not "rt-" + time_frame in cache \
+                else cache["rt-" + time_frame]
+            cache["rt-" + time_frame] = rec_tracks
+            cache["cur"] = cache["rt-" + time_frame]
+            disp_listbox(0, rec_tracks, False, True, limit)
+            # Rec Artists stuff
+            rec_artists = spotify.get_recommended_artists(time_range=time_frame, limit=50) \
+                if not "ra-" + time_frame in cache \
+                else cache["ra-" + time_frame]
+            cache["ra-" + time_frame] = rec_artists
+            disp_listbox(1, rec_artists, False, False, limit)
         else:
             print("Unsupported option passed into the show_list function.")
             exit()
@@ -257,7 +274,7 @@ def show_dual_list_dialog(name, button_img):
     time_frame_options = ["Short Term", "Medium Term", "Long Term"]
     default_timeframe_option = tkinter.StringVar(option_frame)
     default_timeframe_option.trace("w", on_dropdown_change)
-    default_timeframe_option.set(time_frame_options[2])
+    default_timeframe_option.set(time_frame_options[1])
     time_frame_menu = tkinter.OptionMenu(option_frame, default_timeframe_option, *time_frame_options)
     time_frame_menu["bg"] = "black"
     time_frame_menu["fg"] = "#1ed760"
