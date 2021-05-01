@@ -139,7 +139,8 @@ def show_dual_list_dialog(name, button_img):
     def create_playlist_btn_click(id_list):
         spotify.create_playlist([id_list[i]["id"] for i in range(int(default_num_option.get()))],
                                 name="Your {} Tracks".format(name))
-        messagebox.showinfo("Success", "Playlist Created!")
+        # duplicate current view with slight modifications
+        show_dual_list_dialog("Gen", button_img)
 
     def play_playlist_btn_click(id_source):
         ids = []
@@ -198,9 +199,9 @@ def show_dual_list_dialog(name, button_img):
                 else cache["ta-" + time_frame]
             cache["ta-" + time_frame] = top_artists
             disp_listbox(1, top_artists, True, False, limit)
-        elif name == "Rec":
-            # Rec Tracks stuff, same as the Top Artists Stuff above.
-            top_tracks = spotify.get_top_tracks(limit=50, time_range=time_frame) \
+        elif name == "Gen":
+            # Generated playlist view
+            top_tracks = spotify.get_combo_playlist() \
                 if not "tt-" + time_frame in cache \
                 else cache["tt-" + time_frame]
             rec_tracks = spotify.get_recommended_tracks(limit=50, track_seeds=[x["id"] for x in top_tracks[:5]]) \
@@ -237,11 +238,12 @@ def show_dual_list_dialog(name, button_img):
 
     # Buttons after you click into the playlist, where you see the dropdown list
     # and the buttons at the top.
-    gen_playlist_btn = tkinter.Button(option_frame, text="Create Playlist", width=400, height=150,
-                                      command=lambda: create_playlist_btn_click(cache["cur"]),
-                                      image=button_img, bg="black", fg="#1ed760", compound="left",
-                                      relief=RIDGE)
-    gen_playlist_btn.grid(row=0, column=0, padx=5, pady=5)
+    if name != "Gen":
+        gen_playlist_btn = tkinter.Button(option_frame, text="Create Playlist", width=400, height=150,
+                                          command=lambda: create_playlist_btn_click(cache["cur"]),
+                                          image=button_img, bg="black", fg="#1ed760", compound="left",
+                                          relief=RIDGE)
+        gen_playlist_btn.grid(row=0, column=0, padx=5, pady=5)
     time_frame_options = ["Short Term", "Medium Term", "Long Term"]
     default_timeframe_option = tkinter.StringVar(option_frame)
     default_timeframe_option.trace("w", on_dropdown_change)
@@ -260,11 +262,11 @@ def show_dual_list_dialog(name, button_img):
     number_menu["fg"] = "#1ed760"
     number_menu["highlightthickness"] = 0.1
     number_menu.grid(row=0, column=2, padx=5, pady=5, sticky=tkinter.NSEW)
-    gen_playlist_btn = tkinter.Button(option_frame, text="Play Playlist", width=400, height=150,
+    play_playlist_btn = tkinter.Button(option_frame, text="Play Playlist", width=400, height=150,
                                       command=lambda: play_playlist_btn_click(cache["cur"]),
                                       image=button_img, bg="black", fg="#1ed760", compound="left",
                                       relief=RIDGE)
-    gen_playlist_btn.grid(row=0, column=3, padx=5, pady=5)
+    play_playlist_btn.grid(row=0, column=3, padx=5, pady=5)
 
     songs_label = tkinter.Label(label_frame, text="Songs", bg="black", fg="#1ed760", font=("Arial", 12))
     songs_label.grid(row=0, column=0, padx=425)
