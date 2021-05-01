@@ -8,27 +8,32 @@ import os
 
 global sp
 
-# Various scopes to get access to. View scopes here: https://developer.spotify.com/documentation/general/guides/scopes/
-__SPOTIFY_SCOPES__ = "user-top-read playlist-read-private user-read-recently-played " \
+
+def validate_user(username):
+    global sp
+    if username == 'stephen':
+        __SPOTIFY_SCOPES__ = "user-top-read playlist-read-private user-read-recently-played " \
                      "playlist-modify-private playlist-modify-public user-library-read " \
                      "user-modify-playback-state"  # Should not be changed after this line
-# Authorization token specific to the users account
-__AUTH_TOKEN__ = spotipy.prompt_for_user_token(username="", scope=__SPOTIFY_SCOPES__,
+    # Authorization token specific to the users account
+        __AUTH_TOKEN__ = spotipy.prompt_for_user_token(username="", scope=__SPOTIFY_SCOPES__,
                                                client_id="33b20c9a6bd14aa49a6c932aec63e4ac",
                                                client_secret="f8c80aaad212464c901e38d791c81431",
                                                redirect_uri="http://localhost:8080/",
                                                show_dialog=True)
-print("Attempting Authentication with Spotify...")
-#  Seeing if its a valid user
+        print("Attempting Authentication with Spotify...")
+    #  Seeing if its a valid user
 
-if __AUTH_TOKEN__:
-    # Getting the info of the Users Account
-    sp = spotipy.Spotify(auth=__AUTH_TOKEN__)
-    print("Connected to Spotify")
-else:
-    print("Error with AUTH_TOKEN")
-    exit()
-
+        if __AUTH_TOKEN__:
+        # Getting the info of the Users Account
+            sp = spotipy.Spotify(auth=__AUTH_TOKEN__)
+            print("Connected to Spotify")
+        else:
+            print("Error with AUTH_TOKEN")
+            exit()
+    else:
+        print('fail')
+        exit()
 
 # Get the top tracks of the Current User, not a user that isn't logged in.
 # limit is number of artists we want returned, and time range is how far back we want to go
