@@ -8,7 +8,8 @@ from cache import cache  # Used to cache API calls
 from spotipy.exceptions import SpotifyException
 import os
 
-users: int = 0  # number of users who are being compared
+# number of users who are being compared
+users: int = 1  # we start with a user
 
 
 # Main function
@@ -39,10 +40,10 @@ def main():
     center_frame1.place(relx=0.1, rely=0.9, anchor=SW)
     center_frame2 = Frame(base_frame, borderwidth=2, bg="#1ed760", width=btn_dim["w"],
                           height=btn_dim["h"])
-    center_frame2.place(relx=0.9, rely=.9, anchor=SE)
+    center_frame2.place(relx=0.9, rely=0.9, anchor=SE)
     center_frame3 = Frame(base_frame, borderwidth=2, bg="#1ed760", width=btn_dim["w"],
                           height=btn_dim["h"])
-    center_frame3.place(relx=0.5, rely=.9, anchor=S)
+    center_frame3.place(relx=0.5, rely=0.9, anchor=S)
 
     # image for buttons
     width = 100
