@@ -11,7 +11,7 @@ global sp
 
 def validate_user(username):
     global sp
-    if username == 'stephen':
+    if username == 'stephen' or username == 'ying' or username == 'john':
         __SPOTIFY_SCOPES__ = "user-top-read playlist-read-private user-read-recently-played " \
                      "playlist-modify-private playlist-modify-public user-library-read " \
                      "user-modify-playback-state"  # Should not be changed after this line
@@ -233,12 +233,12 @@ def get_user_info(users=[]):
         # Creates the file if it doesn't exist/Prepare to write to the file
         f = open("user_playlist.txt", "w")
 
-        artists_seeds = get_top_artists()  # Gets top artists from current user
+        artists_seeds = get_top_artists(limit=25)  # Gets top artists from current user
         artist_id_list = []  # list to store ids from artists
         for artist in artists_seeds:
             artist_id_list.append(artist['id'])  # Store ids into the list
 
-        track_seeds = get_top_tracks()  # Get top tracks from current user
+        track_seeds = get_top_tracks(limit=25)  # Get top tracks from current user
         track_id_list = []  # List to store ids from tracks
         for track in track_seeds:
             track_id_list.append(track['id'])  # Store ids into the list
@@ -250,12 +250,12 @@ def get_user_info(users=[]):
     else:  # Just append the next set of data
         f = open("user_playlist.txt", "a")  # Creates the file if it doesn't exist/Prepare to write to the file
 
-        artists_seeds = get_top_artists()  # Gets top artists from current user
+        artists_seeds = get_top_artists(limit=25)  # Gets top artists from current user
         artist_id_list = []  # list to store ids from artists
         for artist in artists_seeds:
             artist_id_list.append(artist['id'])  # Store ids into the list
 
-        track_seeds = get_top_tracks()  # Get top tracks from current user
+        track_seeds = get_top_tracks(limit=25)  # Get top tracks from current user
         track_id_list = []  # List to store ids from tracks
         for track in track_seeds:
             track_id_list.append(track['id'])  # Store ids into the list
@@ -325,9 +325,9 @@ def get_combo_playlist():
         first_counter = 0
         second_counter = 0
         # We want 5 search items to pass into recommendation and check to see if we can add more artists
-        if len(new_list_artist) != 5 and (len(first_user_artist) > len(new_list_artist)
+        if len(new_list_artist) != 25 and (len(first_user_artist) > len(new_list_artist)
                                           or len(second_user_artist) > len(new_list_artist)):
-            for i in range(5 - len(new_list_artist)):  # Populate the list until we have 5 artists
+            for i in range(25 - len(new_list_artist)):  # Populate the list until we have 5 artists
                 if i % 2 == 0:  # We will add an artist from the first list to the new list
                     for j in range(len(first_user_artist)):  # We want to find a new artist to add to the list
                         if first_user_artist[j] not in new_list_artist:
@@ -355,9 +355,9 @@ def get_combo_playlist():
         first_counter = 0
         second_counter = 0
         # We want 5 search items to pass into recommendation and check to see if we can add more tracks
-        if len(new_list_track) != 5 and (len(first_user_track) > len(new_list_track)
+        if len(new_list_track) != 25 and (len(first_user_track) > len(new_list_track)
                                          or len(second_user_track) > len(new_list_track)):
-            for i in range(5 - len(new_list_track)):  # Populate the list until we have 5 tracks
+            for i in range(25 - len(new_list_track)):  # Populate the list until we have 5 tracks
                 if i % 2 == 0:  # We will add a track from the first list to the new list
                     for j in range(len(first_user_track)):  # We want to find a new track to add to the list
                         if first_user_track[j] not in new_list_track:

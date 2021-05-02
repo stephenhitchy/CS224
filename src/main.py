@@ -242,11 +242,11 @@ def show_dual_list_dialog(name, button_img):
         elif name == "Add":
             spotify.get_user_info()
             combo_list = spotify.get_combo_playlist()
-            rec_tracks = combo_list['rec_tracks']
-            rec_artists = combo_list['rec_artists']
-            disp_listbox(0, rec_tracks, False, True, limit)
-            disp_listbox(1, rec_artists, False, False, limit)
-            print(combo_list)
+            top_tracks = combo_list['rec_tracks']
+            top_artists = combo_list['rec_artists']
+
+            disp_listbox(0, top_tracks, False, True, limit)
+            disp_listbox(1, top_artists, False, False, limit)
         else:
             print("Unsupported option passed into the show_list function.")
             exit()
