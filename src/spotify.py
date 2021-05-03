@@ -17,15 +17,15 @@ def validate_user(username):
                      "user-modify-playback-state"  # Should not be changed after this line
     # Authorization token specific to the users account
         __AUTH_TOKEN__ = spotipy.prompt_for_user_token(username="", scope=__SPOTIFY_SCOPES__,
-                                               client_id="33b20c9a6bd14aa49a6c932aec63e4ac",
-                                               client_secret="f8c80aaad212464c901e38d791c81431",
-                                               redirect_uri="http://localhost:8080/",
-                                               show_dialog=True)
+                                                       client_id="33b20c9a6bd14aa49a6c932aec63e4ac",
+                                                       client_secret="f8c80aaad212464c901e38d791c81431",
+                                                       redirect_uri="http://localhost:8080/",
+                                                       show_dialog=True)
         print("Attempting Authentication with Spotify...")
     #  Seeing if its a valid user
 
         if __AUTH_TOKEN__:
-        # Getting the info of the Users Account
+            # Getting the info of the Users Account
             sp = spotipy.Spotify(auth=__AUTH_TOKEN__)
             print("Connected to Spotify")
         else:
@@ -34,6 +34,7 @@ def validate_user(username):
     else:
         print('fail')
         exit()
+
 
 # Get the top tracks of the Current User, not a user that isn't logged in.
 # limit is number of artists we want returned, and time range is how far back we want to go

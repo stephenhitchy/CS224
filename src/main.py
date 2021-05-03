@@ -53,22 +53,22 @@ def main():
     img = img.resize((width, height), Image.ANTIALIAS)
     button_img = ImageTk.PhotoImage(img)
 
-    # Add User button
-    add_btn = tkinter.Button(center_frame2, text="Add User", width=400,
-                             height=150, command=lambda: show_dual_list_dialog("Add", button_img),
+    # Combination button
+    com_btn = tkinter.Button(center_frame2, text="Combine!", width=400,
+                             height=150, command=lambda: show_dual_list_dialog("Com", button_img),
                              image=button_img, compound="left", bg="black", fg="#1ed760")
 
     # Get Your Top Tracks button
-    gen_btn = tkinter.Button(center_frame1, text="Get Your Top Tracks", width=400,
+    gen_btn = tkinter.Button(center_frame1, text="Current Top Tracks", width=400,
                              height=150, command=lambda: show_dual_list_dialog("Top", button_img),
                              image=button_img, compound="left", bg="black", fg="#1ed760")
     # Get your recommended tracks, based off the songs you like
-    rec_btn = tkinter.Button(center_frame3, text="Your Recommended Tracks", width=400,
+    rec_btn = tkinter.Button(center_frame3, text="Recommended", width=400,
                              height=150, command=lambda: show_dual_list_dialog("Rec", button_img),
                              image=button_img, compound="left", bg="black", fg="#1ed760")
 
     gen_btn.grid(row=0, column=0, padx=btn_pad["x"], pady=btn_pad["y"])
-    add_btn.grid(row=0, column=2, padx=btn_pad["x"], pady=btn_pad["y"])
+    com_btn.grid(row=0, column=2, padx=btn_pad["x"], pady=btn_pad["y"])
     rec_btn.grid(row=0, column=1, padx=btn_pad["x"], pady=btn_pad["y"])
 
     # create a user login window
@@ -239,7 +239,7 @@ def show_dual_list_dialog(name, button_img):
                 else cache["ra-" + time_frame]
             cache["ra-" + time_frame] = rec_artists
             disp_listbox(1, rec_artists, False, False, limit)
-        elif name == "Add":
+        elif name == "Com":
             spotify.get_user_info()
             combo_list = spotify.get_combo_playlist()
             top_tracks = combo_list['rec_tracks']
@@ -294,9 +294,9 @@ def show_dual_list_dialog(name, button_img):
     number_menu["highlightthickness"] = 0.1
     number_menu.grid(row=0, column=2, padx=5, pady=5, sticky=tkinter.NSEW)
     play_playlist_btn = tkinter.Button(option_frame, text="Play Playlist", width=400, height=150,
-                                      command=lambda: play_playlist_btn_click(cache["cur"]),
-                                      image=button_img, bg="black", fg="#1ed760", compound="left",
-                                      relief=RIDGE)
+                                       command=lambda: play_playlist_btn_click(cache["cur"]),
+                                       image=button_img, bg="black", fg="#1ed760", compound="left",
+                                       relief=RIDGE)
     play_playlist_btn.grid(row=0, column=3, padx=5, pady=5)
 
     songs_label = tkinter.Label(label_frame, text="Songs", bg="black", fg="#1ed760", font=("Arial", 12))
@@ -306,7 +306,6 @@ def show_dual_list_dialog(name, button_img):
 
     center_in_screen(top)
     top.mainloop()
-
 
 
 def center_in_screen(window):
