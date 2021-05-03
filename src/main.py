@@ -275,12 +275,7 @@ def show_dual_list_dialog(name, button_img):
                                           image=button_img, bg="black", fg="#1ed760", compound="left",
                                           relief=RIDGE)
         gen_playlist_btn.grid(row=0, column=0, padx=5, pady=5)
-    elif name != "Gen":
-        gen_playlist_btn = tkinter.Button(option_frame, text="Create Playlist", width=400, height=150,
-                                          command=lambda: create_playlist_btn_click(cache["cur"]),
-                                          image=button_img, bg="black", fg="#1ed760", compound="left",
-                                          relief=RIDGE)
-        gen_playlist_btn.grid(row=0, column=0, padx=5, pady=5)
+    
     time_frame_options = ["Short Term", "Medium Term", "Long Term"]
     default_timeframe_option = tkinter.StringVar(option_frame)
     default_timeframe_option.trace("w", on_dropdown_change)
