@@ -271,7 +271,7 @@ def show_dual_list_dialog(name, button_img):
     # and the buttons at the top.
     if name == "Com":
         gen_playlist_btn = tkinter.Button(option_frame, text="Delete Data", width=400, height=150,
-                                          command=lambda: delete_playlist_btn_click(cache["cur"]),
+                                          command=lambda: delete_playlist_btn_click(),
                                           image=button_img, bg="black", fg="#1ed760", compound="left",
                                           relief=RIDGE)
         gen_playlist_btn.grid(row=0, column=0, padx=5, pady=5)
@@ -313,6 +313,11 @@ def show_dual_list_dialog(name, button_img):
     center_in_screen(top)
     top.mainloop()
 
+def delete_playlist_btn_click():
+    f = open("user_playlist.txt", "r+")
+    print('Trying to close')
+    f.truncate(0)
+    f.close()
 
 def center_in_screen(window):
     screen_width = window.winfo_screenwidth()
